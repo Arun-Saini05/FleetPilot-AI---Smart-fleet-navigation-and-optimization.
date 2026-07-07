@@ -19,7 +19,7 @@ const GREETING_MAP = {
 function getGreeting() {
   const hour = new Date().getHours()
   if (hour < 12) return GREETING_MAP.morning
-  if (hour < 18) return GREETING_MAP.afternoon
+  if (hour < 17) return GREETING_MAP.afternoon
   return GREETING_MAP.evening
 }
 
@@ -74,10 +74,10 @@ export default function LoginPage() {
           <div className="login-logo">
             <div className="login-logo-icon">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 3H15C15.6 3 16 3.4 16 4V16H1V3Z" fill="currentColor" opacity="0.9"/>
-                <path d="M16 8H19L23 12V16H16V8Z" fill="currentColor" opacity="0.7"/>
-                <circle cx="5.5" cy="18.5" r="2.5" fill="currentColor"/>
-                <circle cx="18.5" cy="18.5" r="2.5" fill="currentColor"/>
+                <path d="M1 3H15C15.6 3 16 3.4 16 4V16H1V3Z" fill="currentColor" opacity="0.9" />
+                <path d="M16 8H19L23 12V16H16V8Z" fill="currentColor" opacity="0.7" />
+                <circle cx="5.5" cy="18.5" r="2.5" fill="currentColor" />
+                <circle cx="18.5" cy="18.5" r="2.5" fill="currentColor" />
               </svg>
             </div>
             <span className="login-logo-text">
@@ -97,7 +97,7 @@ export default function LoginPage() {
             {error && (
               <div className="login-error" role="alert">
                 <svg viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
                 {error}
               </div>
@@ -108,7 +108,7 @@ export default function LoginPage() {
               <div className="login-input-wrap">
                 <span className="login-input-icon">
                   <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M2.5 6.5l7.5 5 7.5-5" strokeLinecap="round"/>
+                    <path d="M2.5 6.5l7.5 5 7.5-5" strokeLinecap="round" />
                     <rect x="1.5" y="4" width="17" height="13" rx="2" />
                   </svg>
                 </span>
@@ -134,8 +134,8 @@ export default function LoginPage() {
               <div className="login-input-wrap">
                 <span className="login-input-icon">
                   <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <rect x="4" y="9" width="12" height="9" rx="1.5"/>
-                    <path d="M7 9V6.5a3 3 0 016 0V9" strokeLinecap="round"/>
+                    <rect x="4" y="9" width="12" height="9" rx="1.5" />
+                    <path d="M7 9V6.5a3 3 0 016 0V9" strokeLinecap="round" />
                   </svg>
                 </span>
                 <input
@@ -155,14 +155,14 @@ export default function LoginPage() {
                 >
                   {showPassword ? (
                     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M3 10s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
-                      <circle cx="10" cy="10" r="2"/>
-                      <path d="M3 3l14 14" strokeLinecap="round"/>
+                      <path d="M3 10s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" />
+                      <circle cx="10" cy="10" r="2" />
+                      <path d="M3 3l14 14" strokeLinecap="round" />
                     </svg>
                   ) : (
                     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M3 10s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
-                      <circle cx="10" cy="10" r="2"/>
+                      <path d="M3 10s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" />
+                      <circle cx="10" cy="10" r="2" />
                     </svg>
                   )}
                 </button>
@@ -206,10 +206,10 @@ export default function LoginPage() {
         <div className="login-right-logo">
           <div className="login-logo-icon small">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 3H15C15.6 3 16 3.4 16 4V16H1V3Z" fill="currentColor" opacity="0.9"/>
-              <path d="M16 8H19L23 12V16H16V8Z" fill="currentColor" opacity="0.7"/>
-              <circle cx="5.5" cy="18.5" r="2.5" fill="currentColor"/>
-              <circle cx="18.5" cy="18.5" r="2.5" fill="currentColor"/>
+              <path d="M1 3H15C15.6 3 16 3.4 16 4V16H1V3Z" fill="currentColor" opacity="0.9" />
+              <path d="M16 8H19L23 12V16H16V8Z" fill="currentColor" opacity="0.7" />
+              <circle cx="5.5" cy="18.5" r="2.5" fill="currentColor" />
+              <circle cx="18.5" cy="18.5" r="2.5" fill="currentColor" />
             </svg>
           </div>
           <span className="login-logo-text">
