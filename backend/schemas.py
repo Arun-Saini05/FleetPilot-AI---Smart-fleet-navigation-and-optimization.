@@ -1,5 +1,6 @@
 
 from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -92,7 +93,7 @@ class ShipmentResponse(ShipmentCreate):
     class Config:
         from_attributes = True
 
-# --- Day 6/8 Route Optimization Schemas ---
+# --- Route Optimization Schemas (Day 6/8) ---
 
 class FuelOptimization(BaseModel):
     narrative_recommendation: str
@@ -128,5 +129,46 @@ class RouteOptimizeRequest(BaseModel):
     cargo_type: str
     preferences: Optional[dict] = None
 
-# Alias used by Day 8 endpoint spec
+# Alias — both names work interchangeably
 RouteOptimizationRequest = RouteOptimizeRequest
+
+# Load Post Schemas
+class LoadPostCreate(BaseModel):
+    title: str
+    cargo_description: Optional[str] = None
+    weight_tons: float
+    origin_hub: str
+    destination_hub: str
+    target_price: float
+
+class LoadPostResponse(BaseModel):
+    id: int
+    company_id: int
+    title: str
+    cargo_description: Optional[str]
+    weight_tons: float
+    origin_hub: str
+    destination_hub: str
+    target_price: float
+    status: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# Bid Schemas
+class BidCreate(BaseModel):
+    bid_amount: float
+    estimated_delivery_hours: int
+
+class BidResponse(BaseModel):
+    id: int
+    load_post_id: int
+    carrier_company_id: int
+    bid_amount: float
+    estimated_delivery_hours: int
+    status: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

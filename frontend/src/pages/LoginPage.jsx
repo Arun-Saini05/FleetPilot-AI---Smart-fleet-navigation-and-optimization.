@@ -51,9 +51,12 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const data = await login(email, password)
-      // Store JWT token
+
+      // === CACHE JWT TOKENS ACROSS ALL MODULE KEY CONVENTIONS ===
       localStorage.setItem('access_token', data.access_token)
+      localStorage.setItem('token', data.access_token) // Standard key fallback for Marketplace services
       localStorage.setItem('token_type', data.token_type)
+
       // Redirect to dashboard
       navigate('/dashboard', { replace: true })
     } catch (err) {

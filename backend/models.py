@@ -1,8 +1,8 @@
-from fastapi.openapi import models
 from database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, Boolean, DateTime
 from sqlalchemy.orm import relationship
-from database import Base, engine  # Make sure 'engine' is imported from your database configuration file
+from database import Base, engine
+import datetime
 
 Base.metadata.create_all(bind=engine)
 
@@ -80,3 +80,34 @@ class GeocodeCache(Base):
     address_key = Column(String, unique=True, index=True, nullable=False) # Stores lowercase search query
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
+
+class LoadPost(Base):
+    __tablename__ = "load_posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)  # The shipper who posted the load
+    title = Column(String, nullable=False)
+    cargo_description = Column(String)
+    weight_tons = Column(Float, nullable=False)
+    origin_hub = Column(String, nullable=False)
+    destination_hub = Column(String, nullable=False)
+    target_price = Column(Float, nullable=False)  # Shipper's baseline price offer
+    status = Column(String, default="OPEN")  # OPEN, COMPLETED, CANCELLED
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    # Relationships
+    bids = relationship("Bid", back_populates="load_post", cascade="all, delete-orphan")
+
+class Bid(Base):
+    __tablename__ = "bids"
+
+    id = Column(Integer, primary_key=True, index=True)
+    load_post_id = Column(Integer, ForeignKey("load_posts.id"), nullable=False)
+    carrier_company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)  # The bidder tenant
+    bid_amount = Column(Float, nullable=False)  # Price offered by the carrier
+    estimated_delivery_hours = Column(Integer, nullable=False)
+    status = Column(String, default="PENDING")  # PENDING, ACCEPTED, REJECTED
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    # Relationships
+    load_post = relationship("LoadPost", back_populates="bids")
