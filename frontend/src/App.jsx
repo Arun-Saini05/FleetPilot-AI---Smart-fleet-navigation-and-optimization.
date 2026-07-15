@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
+import FreightMarketplace from './pages/FreightMarketplace'
+import OrganizationMarketplace from './pages/OrganizationMarketplace'
 import { getToken } from './services/authService'
 
 /** Guard: redirect to /login when no token exists */
@@ -21,6 +23,26 @@ function App() {
           element={
             <PrivateRoute>
               <DashboardPage />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Freight Marketplace */}
+        <Route
+          path="/marketplace"
+          element={
+            <PrivateRoute>
+              <FreightMarketplace />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Organization Marketplace */}
+        <Route
+          path="/organization-marketplace"
+          element={
+            <PrivateRoute>
+              <OrganizationMarketplace />
             </PrivateRoute>
           }
         />
