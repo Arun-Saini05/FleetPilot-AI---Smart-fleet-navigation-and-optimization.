@@ -137,9 +137,9 @@ class LoadPostCreate(BaseModel):
     title: str
     cargo_description: Optional[str] = None
     weight_tons: float
-    origin_hub: str
-    destination_hub: str
-    target_price: float
+    origin: str
+    destination: str
+    target_price: Optional[float] = 0.0
 
 class LoadPostResponse(BaseModel):
     id: int
@@ -147,8 +147,8 @@ class LoadPostResponse(BaseModel):
     title: str
     cargo_description: Optional[str]
     weight_tons: float
-    origin_hub: str
-    destination_hub: str
+    origin: str
+    destination: str
     target_price: float
     status: str
     created_at: datetime
@@ -161,14 +161,39 @@ class BidCreate(BaseModel):
     bid_amount: float
     estimated_delivery_hours: int
 
-class BidResponse(BaseModel):
+class BidResponse(BidCreate):
     id: int
     load_post_id: int
     carrier_company_id: int
-    bid_amount: float
-    estimated_delivery_hours: int
+    carrier_company_name: Optional[str] = None
     status: str
-    created_at: datetime
+    
+    # Enrichment fields from ML & Joins
+    load_title: Optional[str] = None
+    load_target_price: Optional[float] = None
+    ai_vendor_recommendation_score: Optional[float] = None
+    ai_predicted_fair_market_price: Optional[float] = None
+    ml_service_active: Optional[bool] = False
+    
+    # Detailed Vendor Profile
+    carrier_contact_email: Optional[str] = None
+    carrier_fleet_size: Optional[int] = 0
+    carrier_driver_count: Optional[int] = 0
 
     class Config:
         from_attributes = True
+
+class MyBidsResponse(BaseModel):
+    id: int
+    load_post_id: int
+    bid_amount: float
+    estimated_delivery_hours: int
+    status: str
+    
+    # Details of the load they bid on
+    load_title: str
+    load_origin: str
+    load_destination: str
+    load_weight_tons: float
+    load_status: str
+    shipper_company_name: str

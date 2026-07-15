@@ -85,14 +85,14 @@ class LoadPost(Base):
     __tablename__ = "load_posts"
 
     id = Column(Integer, primary_key=True, index=True)
-    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)  # The shipper who posted the load
-    title = Column(String, nullable=False)
+    title = Column(String, index=True)         # e.g., "Mumbai Hub to Delhi Terminal"
+    origin = Column(String)                    # Populated by Organization
+    destination = Column(String)               # Populated by Organization
+    weight_tons = Column(Float)
+    target_price = Column(Float)               # Target budget from the Shipper
     cargo_description = Column(String)
-    weight_tons = Column(Float, nullable=False)
-    origin_hub = Column(String, nullable=False)
-    destination_hub = Column(String, nullable=False)
-    target_price = Column(Float, nullable=False)  # Shipper's baseline price offer
-    status = Column(String, default="OPEN")  # OPEN, COMPLETED, CANCELLED
+    status = Column(String, default="OPEN")    # "OPEN", "BIDDING", "AWARDED"
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)               # ID of the creating organization (Shipper)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     # Relationships

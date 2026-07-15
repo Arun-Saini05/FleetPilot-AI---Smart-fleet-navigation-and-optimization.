@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List
+import httpx
 import models
 import schemas
 import security
@@ -42,19 +43,24 @@ app.add_middleware(
 # POST /api/login — Generates a signed JWT for the client
 
 @app.post("/api/login", response_model=schemas.Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """
     Accepts username (email) + password via OAuth2PasswordRequestForm.
     Returns a signed JWT access_token.
-
-    NOTE: Currently simulates a successful login for any credentials
-    while the real user DB / password verification is wired up.
     """
+    user = db.query(models.User).filter(models.User.email == form_data.username).first()
+    if not user or not security.verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     access_token = security.create_access_token(
         data={
-            "sub": form_data.username,
-            "company_id": 1,
-            "role": "fleet_admin",
+            "sub": user.email,
+            "company_id": user.company_id,
+            "role": user.role,
         }
     )
     return {"access_token": access_token, "token_type": "bearer"}
@@ -282,7 +288,8 @@ def optimize_route_pipeline(
         distance_bytes, 
         vehicle.average_mileage_kpl, 
         request.origin, 
-        request.destination
+        request.destination,
+        request.current_fuel_level
     )
 
     # === TEMPORARY DAY 12 TOLL FALLBACK STRATEGY ===
@@ -298,6 +305,38 @@ def optimize_route_pipeline(
     # Queries live climate constraints dynamically using your parsed coordinates
     weather_strategy = fetch_destination_weather_locally(destination_lat, destination_lng)
 
+    # === DAY 14 ML MICROSERVICE INTEGRATION ===
+    # Build feature vector from all pipeline-resolved values
+    ml_feature_vector = {
+        "origin_lat": origin_lat,
+        "origin_lng": origin_lng,
+        "destination_lat": destination_lat,
+        "destination_lng": destination_lng,
+        "distance_meters": float(distance_bytes),
+        "base_eta_seconds": float(duration_seconds),
+        "vehicle_type": f"{vehicle.make} {vehicle.model}",
+        "gross_vehicle_weight_tons": float(vehicle.weight_tons),
+        "cargo_weight_tons": float(request.current_fuel_level),  # fuel level used as cargo proxy
+        "average_mileage_kpl": float(vehicle.average_mileage_kpl),
+        "current_fuel_level": float(request.current_fuel_level),
+        "driver_id": 1,
+        "driver_experience_years": 8.5,
+        "weather_temp": weather_strategy["destination_temp"],
+        "has_precipitation": "Precipitation" in weather_strategy["condition"],
+        "base_toll_cost": toll_strategy["total_toll_cost"]
+    }
+
+    # Dispatch to decoupled ML microservice (port 8001) — safe fallback if offline
+    try:
+        with httpx.Client(timeout=4.0) as client:
+            ml_response = client.post(
+                "http://127.0.0.1:8001/predict/route-insights",
+                json=ml_feature_vector
+            )
+            ml_predictions = ml_response.json() if ml_response.status_code == 200 else {}
+    except Exception:
+        ml_predictions = {}  # Graceful degradation if ML service is offline
+
     return {
         "status": "Pipeline execution complete. All custom layers locked.",
         "company_id_scope": current_tenant.company_id,
@@ -310,21 +349,41 @@ def optimize_route_pipeline(
             "geojson_features": geojson_geom
         },
         "fuel_optimization": {
-          "narrative_recommendation": fuel_strategy["narrative_recommendation"],
-          "financial_savings_estimate": fuel_strategy["financial_savings_estimate"]
+            "narrative_recommendation": fuel_strategy["narrative_recommendation"],
+            "financial_savings_estimate": fuel_strategy["financial_savings_estimate"]
         },
-        "predictive_analytics": { 
-            "trip_efficiency_score": 95.4, 
-            # Day 14 hook: dynamically aggregate our new weather delay risks right into the payload!
-            "probability_of_delay": round(0.04 + weather_strategy["weather_delay_risk"], 2), 
-            "predicted_fuel_consumption_liters": fuel_strategy["predicted_fuel_consumption_liters"]
+        "predictive_analytics": {
+            "trip_efficiency_score": ml_predictions.get("route_efficiency_score", 95.4),
+            "probability_of_delay": ml_predictions.get(
+                "delay_probability",
+                round(0.04 + weather_strategy["weather_delay_risk"], 2)
+            ),
+            "predicted_fuel_consumption_liters": ml_predictions.get(
+                "predicted_fuel_consumption_liters",
+                fuel_strategy["predicted_fuel_consumption_liters"]
+            )
         },
-        "commercial_tolls": { 
+        "commercial_tolls": {
             "toll_cost": toll_strategy["total_toll_cost"],
             "metadata": toll_strategy["compliance"]["narrative"]
         },
-        "meteorological_conditions": { 
-            "destination_temp": weather_strategy["destination_temp"], 
-            "condition": weather_strategy["condition"] 
+        "meteorological_conditions": {
+            "destination_temp": weather_strategy["destination_temp"],
+            "condition": weather_strategy["condition"]
+        },
+        "ml_predictive_insights": {
+            "intelligent_fuel_consumption_liters": ml_predictions.get(
+                "predicted_fuel_consumption_liters",
+                fuel_strategy["predicted_fuel_consumption_liters"]
+            ),
+            "intelligent_eta_seconds": ml_predictions.get("predicted_eta_seconds", duration_seconds),
+            "probability_of_delay": ml_predictions.get(
+                "delay_probability",
+                round(0.04 + weather_strategy["weather_delay_risk"], 2)
+            ),
+            "route_efficiency_score": ml_predictions.get("route_efficiency_score", 95.4),
+            "driver_performance_score": ml_predictions.get("driver_performance_score", 88.0),
+            "ml_service_active": bool(ml_predictions),
+            "confidence_scores": ml_predictions.get("confidence_scores", {})
         }
     }

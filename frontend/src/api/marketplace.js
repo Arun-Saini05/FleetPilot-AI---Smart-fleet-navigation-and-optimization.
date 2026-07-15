@@ -13,6 +13,11 @@ export const fetchMarketplaceLoads = async () => {
     return response.data;
 };
 
+export const createMarketplaceLoad = async (loadData) => {
+    const response = await axios.post(`${API_BASE_URL}/loads`, loadData, getAuthHeaders());
+    return response.data;
+};
+
 export const placeCarrierBid = async (loadId, bidAmount, deliveryHours) => {
     const response = await axios.post(
         `${API_BASE_URL}/loads/${loadId}/bid`,
@@ -24,6 +29,11 @@ export const placeCarrierBid = async (loadId, bidAmount, deliveryHours) => {
 
 export const fetchIncomingBids = async () => {
     const response = await axios.get(`${API_BASE_URL}/my-loads/bids`, getAuthHeaders());
+    return response.data;
+};
+
+export const fetchMyBids = async () => {
+    const response = await axios.get(`${API_BASE_URL}/my-bids`, getAuthHeaders());
     return response.data;
 };
 

@@ -16,6 +16,17 @@ export default function DashboardPage() {
     navigate('/login', { replace: true })
   }
 
+  const getUserRole = () => {
+    try {
+      const token = localStorage.getItem('token');
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.company_id === 1 ? 'SHIPPER_ORG' : 'CARRIER_LOGISTICS';
+    } catch (e) {
+      return 'CARRIER_LOGISTICS';
+    }
+  };
+  const userRole = getUserRole();
+
   return (
     <div className="dashboard-root">
       {/* UNIFIED HEADER BAR */}
@@ -39,32 +50,64 @@ export default function DashboardPage() {
 
         {/* TOP RIGHT NAVIGATION ACTIONS SECTION */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button 
-            className="bidding-platform-btn"
-            onClick={() => navigate('/marketplace')}
-            style={{
-              backgroundColor: '#5c401b',
-              color: '#e8dfd3',
-              border: 'none',
-              padding: '0.65rem 1.6rem',
-              borderRadius: '999px',
-              fontWeight: '600',
-              fontSize: '0.82rem',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.35)',
-              transition: 'background 0.2s, transform 0.15s',
-            }}
-            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            FREIGHT BIDDING <span style={{ fontSize: '1rem' }}>→</span>
-          </button>
-          <span className="tenant-badge">Corporate Dispatcher</span>
+          
+          {userRole === 'SHIPPER_ORG' && (
+            <button 
+              className="bidding-platform-btn org"
+              onClick={() => navigate('/organization-marketplace')}
+              style={{
+                backgroundColor: '#1d4ed8',
+                color: '#fff',
+                border: 'none',
+                padding: '0.65rem 1.2rem',
+                borderRadius: '999px',
+                fontWeight: '600',
+                fontSize: '0.75rem',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                boxShadow: '0 2px 8px rgba(29, 78, 216, 0.35)',
+                transition: 'background 0.2s, transform 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              ORGANIZATION MARKET <span style={{ fontSize: '1rem' }}>→</span>
+            </button>
+          )}
+          
+          {userRole === 'CARRIER_LOGISTICS' && (
+            <button 
+              className="bidding-platform-btn carrier"
+              onClick={() => navigate('/marketplace')}
+              style={{
+                backgroundColor: '#5c401b',
+                color: '#e8dfd3',
+                border: 'none',
+                padding: '0.65rem 1.2rem',
+                borderRadius: '999px',
+                fontWeight: '600',
+                fontSize: '0.75rem',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.35)',
+                transition: 'background 0.2s, transform 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              CARRIER BOARD <span style={{ fontSize: '1rem' }}>→</span>
+            </button>
+          )}
+          
+          <span className="tenant-badge">{userRole === 'SHIPPER_ORG' ? 'Shipper Hub' : 'Carrier Hub'}</span>
         </div>
       </header>
 

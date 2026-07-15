@@ -86,7 +86,7 @@ const Shipments = () => {
                     <input type="text" name="title" placeholder="Cargo Description (e.g. Steel Rods)" value={formData.title} onChange={handleChange} required style={{ padding: '0.6rem', borderRadius: '4px', border: '1px solid #ccc', flex: '1', minWidth: '180px' }} />
                     <input type="text" name="origin" placeholder="Origin Hub" value={formData.origin} onChange={handleChange} required style={{ padding: '0.6rem', borderRadius: '4px', border: '1px solid #ccc', flex: '1', minWidth: '150px' }} />
                     <input type="text" name="destination" placeholder="Destination Target" value={formData.destination} onChange={handleChange} required style={{ padding: '0.6rem', borderRadius: '4px', border: '1px solid #ccc', flex: '1', minWidth: '150px' }} />
-                    <input type="number" name="freight_value" placeholder="Freight Valuation ($)" value={formData.freight_value} onChange={handleChange} required style={{ padding: '0.6rem', borderRadius: '4px', border: '1px solid #ccc', flex: '1', minWidth: '120px' }} />
+                    <input type="number" name="freight_value" placeholder="Freight Valuation (₹)" value={formData.freight_value} onChange={handleChange} required style={{ padding: '0.6rem', borderRadius: '4px', border: '1px solid #ccc', flex: '1', minWidth: '120px' }} />
 
                     {/* DYNAMIC VEHICLE SELECTION */}
                     <select name="vehicle_id" value={formData.vehicle_id} onChange={handleChange} style={{ padding: '0.6rem', borderRadius: '4px', border: '1px solid #ccc', flex: '1', minWidth: '180px' }}>
@@ -128,7 +128,7 @@ const Shipments = () => {
                                     <td style={{ padding: '1rem' }}>#TRK-{s.id}</td>
                                     <td style={{ padding: '1rem', fontWeight: 'bold' }}>{s.title}</td>
                                     <td style={{ padding: '1rem' }}><code>{s.origin} ➔ {s.destination}</code></td>
-                                    <td style={{ padding: '1rem', color: '#28a745', fontWeight: '500' }}>${s.freight_value.toLocaleString()}</td>
+                                    <td style={{ padding: '1rem', color: '#28a745', fontWeight: '500' }}>₹{s.freight_value.toLocaleString()}</td>
                                     <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
                                         <div>🚛 Truck ID: {s.vehicle_id || '⚠️ Unassigned'}</div>
                                         <div>🪪 Crew ID: {s.driver_id || '⚠️ Unassigned'}</div>

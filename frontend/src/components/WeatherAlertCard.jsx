@@ -3,11 +3,12 @@ import React from 'react';
 export default function WeatherAlertCard({ meteorologicalConditions, predictiveAnalytics }) {
     if (!meteorologicalConditions) return null;
 
-    const { destination_temp, condition } = meteorologicalConditions;
+    const { destination_temp, condition, humidity_pct, wind_speed_ms } = meteorologicalConditions;
     const { probability_of_delay } = predictiveAnalytics || { probability_of_delay: 0.04 };
 
     // Calculate danger threshold dynamically
     const isHighRisk = probability_of_delay > 0.10;
+    const hasStormAlert = condition?.toLowerCase().includes('precipitation') || condition?.toLowerCase().includes('storm');
 
     return (
         <div style={{
@@ -23,6 +24,12 @@ export default function WeatherAlertCard({ meteorologicalConditions, predictiveA
                 {isHighRisk ? '⚠️ Weather Delay Warning' : '☀️ En-Route Weather Conditions'}
             </h3>
 
+            {hasStormAlert && (
+                <div style={{ background: '#fef2f2', color: '#b91c1c', padding: '10px', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    ⛈️ SEVERE STORM / PRECIPITATION ALERT
+                </div>
+            )}
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '10px' }}>
                 <div style={{ background: '#f9fafb', padding: '10px', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.75rem', color: '#6b7280', display: 'block', fontWeight: 'bold' }}>DESTINATION TEMP</span>
@@ -35,6 +42,20 @@ export default function WeatherAlertCard({ meteorologicalConditions, predictiveA
                         {(probability_of_delay * 100).toFixed(0)}%
                     </span>
                 </div>
+                
+                {humidity_pct !== undefined && (
+                    <div style={{ background: '#f9fafb', padding: '10px', borderRadius: '8px' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', display: 'block', fontWeight: 'bold' }}>PRECIPITATION CHANCE</span>
+                        <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111827' }}>{humidity_pct}%</span>
+                    </div>
+                )}
+
+                {wind_speed_ms !== undefined && (
+                    <div style={{ background: '#f9fafb', padding: '10px', borderRadius: '8px' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', display: 'block', fontWeight: 'bold' }}>WIND SPEED</span>
+                        <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111827' }}>{wind_speed_ms} m/s</span>
+                    </div>
+                )}
             </div>
 
             <p style={{

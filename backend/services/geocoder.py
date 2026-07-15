@@ -22,11 +22,11 @@ def resolve_address_to_coords(address: str, db: Session) -> tuple[float, float]:
     ).first()
     
     if cached_entry:
-        print(f"📡 Database Cache Hit for: '{normalized_query}'")
+        print(f"Database Cache Hit for: '{normalized_query}'")
         return cached_entry.latitude, cached_entry.longitude
 
     # 2. Cache Miss - Query LocationIQ forward search endpoint
-    print(f"🌐 Cache Miss. Contacting LocationIQ Infrastructure for: '{normalized_query}'")
+    print(f"Cache Miss. Contacting LocationIQ Infrastructure for: '{normalized_query}'")
     
     # LocationIQ uses us1.locationiq.com/v1/search for text geocoding addresses
     url = "https://us1.locationiq.com/v1/search"
