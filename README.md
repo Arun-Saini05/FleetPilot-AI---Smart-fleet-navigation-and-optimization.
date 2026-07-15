@@ -4,7 +4,7 @@
 
   ![License](https://img.shields.io/badge/license-MIT-blue.svg)
   ![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=black)
-  ![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?logo=nodedotjs&logoColor=white)
+  ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi&logoColor=white)
   ![FastAPI](https://img.shields.io/badge/ML_Service-FastAPI-009688?logo=fastapi&logoColor=white)
 </div>
 
@@ -28,29 +28,29 @@ The platform is built on a strict microservices architecture. The backend acts a
 
 ```mermaid
 graph TD
-    Client[React Frontend Dashboard] -->|REST API / JWT| Gateway(Node.js Backend Gateway)
+    Client[React Frontend Dashboard] -->|REST API / JWT| Gateway("FastAPI Backend Gateway")
     
     subgraph Microservices
-        Auth[Auth & Tenant Isolation]
-        Bidding[Freight Bidding Module]
-        Fuel[Custom Fuel Optimization]
+        Auth["Auth & Tenant Isolation"]
+        Bidding["Freight Bidding Module"]
+        Fuel["Custom Fuel Optimization"]
         Gateway --> Auth
         Gateway --> Bidding
         Gateway --> Fuel
     end
 
-    subgraph AI & Data Services
-        ML[Python FastAPI ML Service<br/>ETA, Fuel & Score Predictions]
-        LLM[Explainable AI LLM<br/>Natural Language Justification]
+    subgraph "AI & Data Services"
+        ML["Python FastAPI ML Service (ETA, Fuel & Score Predictions)"]
+        LLM["Explainable AI LLM (Natural Language Justification)"]
         Gateway --> ML
         Gateway --> LLM
     end
 
     subgraph External APIs
-        HERE[HERE Suite<br/>Routing, Traffic, Search]
-        SSR[SSR Innovation Lab<br/>Fuel Routes & Pricing]
-        Toll[TollGuru<br/>Toll Calculations]
-        Weather[OpenWeather<br/>Weather Alerts]
+        HERE["HERE Suite (Routing, Traffic, Search)"]
+        SSR["SSR Innovation Lab (Fuel Routes & Pricing)"]
+        Toll["TollGuru (Toll Calculations)"]
+        Weather["OpenWeather (Weather Alerts)"]
         
         Gateway --> HERE
         Gateway --> SSR
@@ -92,12 +92,12 @@ How a single click on **"Optimize Route"** orchestrates the entire platform:
 sequenceDiagram
     autonumber
     participant Frontend
-    participant Backend as Backend Gateway
+    participant Backend as FastAPI Backend Gateway
     participant DB as Database
     participant HERE as HERE APIs
     participant SSR as SSR APIs
-    participant TollWeather as TollGuru & Weather
-    participant AI as ML & AI Services
+    participant TollWeather as "TollGuru & Weather"
+    participant AI as "ML & AI Services"
 
     Frontend->>Backend: POST /api/routes/optimize (JWT attached)
     Backend->>Backend: Validate JWT & extract company_id
@@ -143,12 +143,16 @@ git clone https://github.com/your-username/fleetpilot-ai.git
 cd fleetpilot-ai
 ```
 
-### 2. Backend Gateway
+### 2. Backend Gateway (FastAPI)
 ```bash
 cd backend
-npm install
+# Create and activate virtual environment
+python -m venv venv
+venv\Scripts\activate
+# Install requirements
+pip install -r requirements.txt
 # Configure .env with DB and API keys
-npm run dev
+uvicorn main:app --reload
 ```
 
 ### 3. Frontend Dashboard
